@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hey babe 💧 drink some water</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;1,300&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sky: #c8e8f5;
+    --water: #5bb8e8;
+    --deep: #1a6fa8;
+    --foam: #eaf6fd;
+    --blush: #f9d4e0;
+    --text: #1c3d5a;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--sky);
+    color: var(--text);
+    cursor: none;
+    overflow: hidden;
+  }
+
+  .cursor {
+    width: 16px; height: 16px;
+    background: var(--water);
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.12s, background 0.2s;
+    mix-blend-mode: multiply;
+  }
+  .cursor.pop { transform: translate(-50%, -50%) scale(2.8); background: var(--blush); }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgba(91,184,232,0.35) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(249,212,224,0.45) 0%, transparent 65%),
+      radial-gradient(ellipse 100% 80% at 50% 100%, rgba(91,184,232,0.25) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .bubbles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .bubble {
+    position: absolute; border-radius: 50%;
+    background: rgba(255,255,255,0.45);
+    border: 1.5px solid rgba(255,255,255,0.7);
+    animation: rise linear infinite;
+  }
+  @keyframes rise {
+    0%   { transform: translateY(110vh); opacity: 0; }
+    10%  { opacity: 1; } 90% { opacity: 0.5; }
+    100% { transform: translateY(-10vh); opacity: 0; }
+  }
+
+  .stage {
+    position: relative; z-index: 1; height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+
+  .label {
+    font-size: clamp(10px,1.6vw,13px); letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--deep); opacity: 0.65; margin-bottom: 16px;
+    animation: fadeUp 0.9s ease both;
+  }
+
+  .headline {
+    font-family: 'Fraunces', serif; font-weight: 700;
+    font-size: clamp(40px, 9vw, 100px); line-height: 0.92; text-align: center;
+    color: var(--text); animation: fadeUp 0.9s 0.15s ease both;
+  }
+  .headline em { font-style: italic; font-weight: 300; color: var(--water); display: block; }
+
+  .cup-wrap { margin: 30px 0 22px; animation: fadeUp 0.9s 0.25s ease both; }
+  .cup { width: 86px; height: 114px; position: relative; }
+  .cup-body {
+    width: 86px; height: 104px;
+    border: 3px solid var(--deep); border-top: none;
+    border-radius: 0 0 22px 22px; position: absolute; bottom: 0;
+    overflow: hidden; background: rgba(255,255,255,0.22);
+  }
+  .cup-top {
+    width: 94px; height: 8px; border: 3px solid var(--deep);
+    border-radius: 8px 8px 0 0; position: absolute; top: 0; left: -4px;
+    background: rgba(255,255,255,0.28);
+  }
+  .water-fill {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(180deg, rgba(91,184,232,0.72), rgba(26,111,168,0.88));
+    transition: height 0.65s cubic-bezier(0.34,1.56,0.64,1);
+    border-radius: 0 0 20px 20px;
+  }
+  .wave { position: absolute; top: -6px; left: -10px; right: -10px; height: 14px; background: rgba(200,232,245,0.9); border-radius: 50%; animation: wv 2s ease-in-out infinite alternate; }
+  @keyframes wv { 0% { transform: translateX(-6px); } 100% { transform: translateX(6px); } }
+
+  .dots-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 340px; margin-bottom: 6px; animation: fadeUp 0.9s 0.4s ease both; }
+  .dot {
+    width: 36px; height: 36px; border-radius: 10px;
+    border: 2px solid var(--water); background: rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    position: relative; overflow: hidden;
+  }
+  .dot.on { background: var(--water); border-color: var(--deep); }
+  .dot.on::after { content: '💧'; position: absolute; animation: dropIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes dropIn { 0% { transform: scale(0) translateY(-8px); } 100% { transform: scale(1); } }
+
+  .dots-lbl { font-size: 11px; font-weight: 300; letter-spacing: 0.1em; opacity: 0.6; margin-bottom: 22px; animation: fadeUp 0.9s 0.45s ease both; }
+
+  .drink-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 15px 34px; background: var(--deep); color: white;
+    border: none; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; cursor: none;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: fadeUp 0.9s 0.55s ease both;
+    box-shadow: 0 8px 28px rgba(26,111,168,0.28);
+  }
+  .drink-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(26,111,168,0.38); }
+  .drink-btn:active { transform: scale(0.97); }
+  .drink-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent 60%); }
+
+  .done-msg { display: none; font-family: 'Fraunces', serif; font-size: clamp(20px,3.5vw,32px); font-style: italic; color: var(--deep); text-align: center; margin-top: 12px; animation: fadeUp 0.6s ease both; }
+
+  /* ── Notification onboarding ── */
+  .notif-overlay {
+    position: fixed; inset: 0; z-index: 500;
+    background: rgba(200,232,245,0.55);
+    backdrop-filter: blur(14px) saturate(1.2);
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.4s ease both;
+  }
+  .notif-overlay.hidden { display: none; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .notif-card {
+    background: white; border-radius: 28px;
+    padding: 38px 32px; max-width: 360px; width: 90%;
+    box-shadow: 0 24px 70px rgba(26,111,168,0.16);
+    text-align: center;
+    animation: cardIn 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes cardIn { from { opacity: 0; transform: scale(0.88) translateY(24px); } to { opacity: 1; transform: none; } }
+
+  .notif-card .icon { font-size: 52px; margin-bottom: 16px; display: block; }
+  .notif-card h2 { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .notif-card h2 em { font-style: italic; font-weight: 300; color: var(--water); }
+  .notif-card p { font-size: 14px; font-weight: 300; opacity: 0.68; line-height: 1.7; margin-bottom: 26px; }
+
+  .interval-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .interval-btn {
+    padding: 14px 10px; border: 2px solid rgba(91,184,232,0.3);
+    border-radius: 14px; background: var(--foam);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    color: var(--text); cursor: none; transition: all 0.18s;
+  }
+  .interval-btn:hover { background: var(--sky); border-color: var(--water); }
+  .interval-btn.picked { background: var(--water); border-color: var(--deep); color: white; font-weight: 500; transform: scale(1.04); }
+
+  .confirm-btn {
+    width: 100%; padding: 15px; background: var(--deep); color: white;
+    border: none; border-radius: 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; cursor: none;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 6px 24px rgba(26,111,168,0.3);
+  }
+  .confirm-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .confirm-btn:not(:disabled):hover { transform: translateY(-2px); }
+
+  .skip-link { display: block; margin-top: 14px; font-size: 12px; opacity: 0.4; cursor: none; text-decoration: underline; }
+  .skip-link:hover { opacity: 0.7; }
+
+  /* ── Active pill ── */
+  .reminder-pill {
+    position: fixed; top: 16px; right: 16px; z-index: 200;
+    display: none; align-items: center; gap: 8px;
+    background: white; border-radius: 100px;
+    padding: 8px 14px 8px 10px;
+    box-shadow: 0 4px 20px rgba(26,111,168,0.14);
+    font-size: 12px; color: var(--text); cursor: none;
+    animation: slideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  .reminder-pill.show { display: flex; }
+  @keyframes slideIn { from { opacity:0; transform: translateX(30px); } to { opacity:1; transform: none; } }
+  .green-dot { width: 8px; height: 8px; background: #4caf50; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { transform: scale(1); opacity:1; } 50% { transform: scale(1.4); opacity:0.6; } }
+  .pill-x { background: none; border: none; font-size: 14px; cursor: none; opacity: 0.4; padding: 0; line-height: 1; margin-left: 2px; }
+  .pill-x:hover { opacity: 1; }
+
+  /* ── Denied banner ── */
+  .denied-banner {
+    position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
+    background: #fff8e1; border: 1.5px solid #f5c842; border-radius: 14px;
+    padding: 14px 22px; font-size: 13px; color: #6d4c00; max-width: 320px;
+    text-align: center; z-index: 300; display: none; line-height: 1.55;
+    animation: popUp 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  .denied-banner.show { display: block; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 44px; left: 50%; transform: translateX(-50%);
+    background: white; border-radius: 18px; padding: 13px 26px;
+    box-shadow: 0 8px 36px rgba(26,111,168,0.16);
+    font-size: 14px; color: var(--text); z-index: 400; white-space: nowrap;
+    animation: popUp 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  .toast.out { animation: popDown 0.35s ease forwards; }
+
+  /* ── Ticker ── */
+  .ticker { position: fixed; bottom: 0; left: 0; right: 0; height: 36px; background: var(--blush); display: flex; align-items: center; overflow: hidden; z-index: 10; }
+  .ticker-inner { display: flex; gap: 80px; white-space: nowrap; animation: tick 28s linear infinite; font-size: 11px; font-weight: 300; letter-spacing: 0.12em; color: var(--deep); opacity: 0.65; }
+  @keyframes tick { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  .confetti { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: fall 1.2s ease-in forwards; }
+  @keyframes fall { 0% { transform: translate(0,0) rotate(0deg); opacity:1; } 100% { transform: translate(var(--dx),var(--dy)) rotate(720deg); opacity:0; } }
+  .splash { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
+
+  @keyframes fadeUp { 0% { opacity:0; transform: translateY(18px); } 100% { opacity:1; transform: none; } }
+  @keyframes popUp { 0% { opacity:0; transform: translateX(-50%) translateY(14px) scale(0.92); } 100% { opacity:1; transform: translateX(-50%) scale(1); } }
+  @keyframes popDown { 100% { opacity:0; transform: translateX(-50%) translateY(14px) scale(0.92); } }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="bubbles" id="bubbles"></div>
+<div class="splash"  id="splash"></div>
+
+<!-- ── Notification onboarding ── -->
+<div class="notif-overlay" id="notifOverlay">
+  <div class="notif-card">
+    <span class="icon">🔔</span>
+    <h2>remind me to<br><em>drink water</em></h2>
+    <p>Pick how often and I'll send you a browser notification — works even when this tab is in the background 💧</p>
+
+    <div class="interval-grid">
+      <button class="interval-btn" data-mins="15"  onclick="pickInterval(15)">every 15 min</button>
+      <button class="interval-btn" data-mins="30"  onclick="pickInterval(30)">every 30 min</button>
+      <button class="interval-btn" data-mins="60"  onclick="pickInterval(60)">every hour ⭐</button>
+      <button class="interval-btn" data-mins="120" onclick="pickInterval(120)">every 2 hrs</button>
+    </div>
+
+    <button class="confirm-btn" id="confirmBtn" onclick="enableNotifications()" disabled>
+      turn on reminders 💧
+    </button>
+    <span class="skip-link" onclick="dismissOverlay()">maybe later</span>
+  </div>
+</div>
+
+<!-- ── Active reminder pill ── -->
+<div class="reminder-pill" id="reminderPill">
+  <span class="green-dot"></span>
+  <span id="pillLabel">reminders on</span>
+  <button class="pill-x" onclick="stopReminders()" title="Turn off">✕</button>
+</div>
+
+<!-- ── Main page ── -->
+<div class="stage">
+  <p class="label">a gentle reminder from babe 🌊</p>
+  <h1 class="headline">drink your<br><em>water, love</em></h1>
+
+  <div class="cup-wrap">
+    <div class="cup">
+      <div class="cup-top"></div>
+      <div class="cup-body">
+        <div class="water-fill" id="waterFill" style="height:12%">
+          <div class="wave"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dots-row" id="dotsRow"></div>
+  <p class="dots-lbl"  id="dotsLbl">0 / 8 glasses today</p>
+
+  <button class="drink-btn" id="drinkBtn" onclick="drinkWater()">
+    <span>💧</span> I drank a glass!
+  </button>
+  <p class="done-msg" id="doneMsg">you're a hydration goddess ✨</p>
+</div>
+
+<div class="denied-banner" id="deniedBanner">
+  ⚠️ Notifications are blocked. Go to your browser's site settings for this page and allow notifications, then refresh.
+</div>
+
+<div class="ticker"><div class="ticker-inner" id="ticker"></div></div>
+
+<script>
+// ── Cursor ──
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => { cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px'; });
+document.addEventListener('mousedown', () => cursor.classList.add('pop'));
+document.addEventListener('mouseup',   () => cursor.classList.remove('pop'));
+
+// ── Bubbles ──
+const bw = document.getElementById('bubbles');
+function mkBubble(){
+  const b=document.createElement('div'); b.className='bubble';
+  const s=8+Math.random()*30;
+  b.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${7+Math.random()*10}s;animation-delay:${Math.random()*6}s;`;
+  bw.appendChild(b); setTimeout(()=>b.remove(),20000);
+}
+for(let i=0;i<16;i++) mkBubble();
+setInterval(mkBubble,2000);
+
+// ── Tracker ──
+const MAX=8;
+let glasses=parseInt(localStorage.getItem('wg')||'0');
+const today=new Date().toDateString();
+if(localStorage.getItem('wd')!==today){glasses=0;localStorage.setItem('wd',today);localStorage.setItem('wg','0');}
+
+const waterFill=document.getElementById('waterFill');
+const dotsRow=document.getElementById('dotsRow');
+const dotsLbl=document.getElementById('dotsLbl');
+
+const toastMsgs=["good girl! 💕","that's my love! 😊","so proud of you! 🌟","stay hydrated, babe! 💧","you're glowing already! ✨","one more! you've got this 💪","your skin is thanking you 🌸","keep it up cutie! 💙"];
+
+function buildDots(){
+  dotsRow.innerHTML='';
+  for(let i=0;i<MAX;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<glasses?' on':'');
+    d.textContent=i<glasses?'':'○';
+    dotsRow.appendChild(d);
+  }
+  waterFill.style.height=Math.max(10,(glasses/MAX)*100)+'%';
+  dotsLbl.textContent=`${glasses} / ${MAX} glasses today`;
+  if(glasses>=MAX){
+    document.getElementById('drinkBtn').style.display='none';
+    document.getElementById('doneMsg').style.display='block';
+    spawnConfetti(80);
+  }
+}
+
+function drinkWater(){
+  if(glasses>=MAX) return;
+  glasses++; localStorage.setItem('wg',glasses);
+  buildDots();
+  showToast(toastMsgs[Math.min(glasses-1,toastMsgs.length-1)]);
+  spawnConfetti(20);
+}
+
+buildDots();
+
+// ── Ticker ──
+const tickerMsgs=["drink your water babe 💧","hydration = glowing skin 🌸","your body is 60% water ✨","stay hydrated, stay gorgeous 💙","because I love you 🥰","just one glass! 🌊","you can do it! 💪","water = energy + happiness 🌟"];
+const ti=document.getElementById('ticker');
+ti.innerHTML=[...tickerMsgs,...tickerMsgs,...tickerMsgs,...tickerMsgs].map(t=>`<span>${t}</span>`).join('');
+
+// ── Confetti ──
+function spawnConfetti(n){
+  const cols=['#5bb8e8','#f9d4e0','#f5c842','#a8dff7','#fff','#1a6fa8'];
+  for(let i=0;i<n;i++){
+    const c=document.createElement('div'); c.className='confetti';
+    c.style.cssText=`left:${40+Math.random()*20}vw;top:45vh;background:${cols[Math.random()*cols.length|0]};--dx:${(Math.random()-.5)*300}px;--dy:${(Math.random()-.8)*250}px;animation-delay:${Math.random()*.3}s;animation-duration:${.9+Math.random()*.5}s;`;
+    document.getElementById('splash').appendChild(c);
+    setTimeout(()=>c.remove(),1800);
+  }
+}
+
+// ── Toast ──
+function showToast(txt){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=document.createElement('div'); t.className='toast'; t.textContent=txt;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),400);},2600);
+}
+
+// ── Notifications ──
+let reminderTimer=null, chosenMins=0, notifIdx=0;
+
+const notifMsgs=[
+  {title:"hey babe 💧",          body:"time for a glass of water! your body needs it 🌊"},
+  {title:"hydration check! 💕",  body:"drink some water right now, pretty please 🥺"},
+  {title:"psst… 💙",             body:"put down your phone and grab some water 💧"},
+  {title:"water break! 🌸",      body:"your skin, energy & mood will thank you ✨"},
+  {title:"from babe with love 🥰",body:"please drink a glass of water rn 💧💧"},
+];
+
+// On load — restore or show onboarding
+(function init(){
+  const saved=parseInt(localStorage.getItem('reminderMins')||'0');
+  if(saved>0 && Notification.permission==='granted'){
+    document.getElementById('notifOverlay').classList.add('hidden');
+    startTimer(saved);
+  } else if(Notification.permission==='denied'){
+    document.getElementById('notifOverlay').classList.add('hidden');
+  }
+  // else: show onboarding (default)
+})();
+
+function pickInterval(mins){
+  chosenMins=mins;
+  document.querySelectorAll('.interval-btn').forEach(b=>b.classList.toggle('picked',parseInt(b.dataset.mins)===mins));
+  document.getElementById('confirmBtn').disabled=false;
+}
+
+async function enableNotifications(){
+  if(!chosenMins) return;
+  const perm=await Notification.requestPermission();
+  if(perm==='granted'){
+    localStorage.setItem('reminderMins',chosenMins);
+    dismissOverlay();
+    startTimer(chosenMins);
+    setTimeout(()=>{
+      new Notification("reminders are on! 💧",{
+        body:"I'll remind you every "+fmtMins(chosenMins)+" to drink water 🌊",
+        icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💧</text></svg>',
+      });
+    },700);
+  } else {
+    dismissOverlay();
+    document.getElementById('deniedBanner').classList.add('show');
+    setTimeout(()=>document.getElementById('deniedBanner').classList.remove('show'),8000);
+  }
+}
+
+function startTimer(mins){
+  chosenMins=mins;
+  clearInterval(reminderTimer);
+  reminderTimer=setInterval(fireNotif, mins*60*1000);
+  const pill=document.getElementById('reminderPill');
+  pill.classList.add('show');
+  document.getElementById('pillLabel').textContent='reminding every '+fmtMins(mins);
+}
+
+function fireNotif(){
+  if(glasses>=MAX) return;
+  const m=notifMsgs[notifIdx++%notifMsgs.length];
+  try{ new Notification(m.title,{body:m.body,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💧</text></svg>'}); }catch(e){}
+}
+
+function stopReminders(){
+  clearInterval(reminderTimer); reminderTimer=null; chosenMins=0;
+  localStorage.setItem('reminderMins','0');
+  document.getElementById('reminderPill').classList.remove('show');
+  showToast('reminders turned off 🔕');
+}
+
+function dismissOverlay(){ document.getElementById('notifOverlay').classList.add('hidden'); }
+
+function fmtMins(m){ return m<60?m+' min':m===60?'hour':'2 hrs'; }
+</script>
+</body>
+</html>
